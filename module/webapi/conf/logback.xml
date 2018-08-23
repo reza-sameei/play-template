@@ -1,0 +1,22 @@
+<configuration debug="true" >
+  
+    <conversionRule conversionWord="coloredLevel" converterClass="play.api.libs.logback.ColoredLevel" />
+
+    <appender name="Stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <!--pattern>%date [%level] from %logger in %thread - %message%n%xException</pattern-->
+            <pattern>%date [%level] %logger - %message%n%xException</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="com.datastax.driver.core" level="INFO" />
+    <logger name="akka" level="INFO" />
+    <logger name="actors" level="INFO" />
+    <logger name="play" level="INFO" />
+
+    <root level="INFO">
+        <appender-ref ref="Stdout" />
+    </root>
+
+</configuration>
+

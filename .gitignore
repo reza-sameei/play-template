@@ -1,0 +1,7 @@
+
+*.swp
+.idea
+target
+project/target
+module/web/target
+module/web/project/target
