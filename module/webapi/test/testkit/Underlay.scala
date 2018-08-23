@@ -1,19 +1,17 @@
-package xyz.sigmalab.template.play.testkit
+package testkit
 
-import akka.stream.ActorMaterializer
 import org.scalactic.source.Position
-import org.scalatest.{FlatSpec, MustMatchers, OptionValues}
 import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.{FlatSpec, MustMatchers, OptionValues}
 import org.scalatestplus.play.WsScalaTestClient
 import org.scalatestplus.play.components.OneAppPerSuiteWithComponents
 import play.api.BuiltInComponents
 import play.api.http.Writeable
 import play.api.mvc.{Request, Result, Results}
-import xyz.sigmalab.template.play.underlay.ApplicationComponents
 import play.api.test.Helpers._
 
-import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.concurrent.duration._
+import scala.concurrent.{Await, ExecutionContext, Future}
 
 trait Underlay
     extends FlatSpec
@@ -26,9 +24,9 @@ trait Underlay
     with OneAppPerSuiteWithComponents
 {
 
-    lazy val underlay = new ApplicationComponents(context)
+    lazy val underlay = new util.Components(context)
     override val components: BuiltInComponents = underlay
-    implicit val mat = ActorMaterializer()(components.actorSystem)
+    implicit val mat = components.materializer
     implicit val ece = ExecutionContext.global
 
     def tryBy[T,R](req: => Request[T])(fn: Result => R)(

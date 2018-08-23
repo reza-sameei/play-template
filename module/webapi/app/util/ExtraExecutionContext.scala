@@ -1,4 +1,4 @@
-package xyz.sigmalab.template.play.util
+package util
 
 import javax.inject.Inject
 

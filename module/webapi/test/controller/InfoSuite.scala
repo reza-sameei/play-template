@@ -1,14 +1,10 @@
 package controller
 
-import akka.stream.ActorMaterializer
 import play.api.mvc.{AnyContent, Request}
 import play.api.test._
 import play.api.test.Helpers._
 
-import scala.concurrent.Await
-import scala.concurrent.duration._
-
-class InfoSuite extends xyz.sigmalab.template.play.testkit.Underlay {
+class InfoSuite extends testkit.Underlay {
 
     it must "return 404" in tryBy {
         FakeRequest(GET,"/base-url/v1/OPS")
@@ -30,7 +26,9 @@ class InfoSuite extends xyz.sigmalab.template.play.testkit.Underlay {
             .withBody("{'key': 'vlaue'}")
             .asInstanceOf[Request[AnyContent]]
 
-        val response = await { underlay.info.summary().apply(req) }
+        val response = await {
+            underlay.controllerInstance.info.summary().apply(req)
+        }
 
         val body = bodyAsString(response)
 

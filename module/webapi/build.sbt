@@ -16,3 +16,4 @@ libraryDependencies ++= Seq(
 )
 
 // routesGenerator := InjectedRoutesGenerator
+// routesGenerator := StaticRoutesGenerator

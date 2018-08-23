@@ -1,9 +1,9 @@
-package xyz.sigmalab.template.play.underlay
+package util
 
-import play.api.LoggerConfigurator
 import play.api.ApplicationLoader.Context
+import play.api.LoggerConfigurator
 
-class ApplicationLoader extends play.api.ApplicationLoader {
+class Loader extends play.api.ApplicationLoader {
 
     def load(context: Context) = {
 
@@ -15,7 +15,7 @@ class ApplicationLoader extends play.api.ApplicationLoader {
         }
 
         // Application instance
-        new ApplicationComponents(context).application
+        new Components(context).application
     }
 }
 
