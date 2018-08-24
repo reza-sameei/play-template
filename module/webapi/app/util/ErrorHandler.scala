@@ -1,8 +1,10 @@
 package util
 
+import akka.util.ByteString
 import play.api.Logger
 import play.api.http.{HttpEntity, HttpErrorHandler}
 import play.api.mvc.{RequestHeader, ResponseHeader, Result}
+import play.api.mvc.Results._
 
 import scala.concurrent.Future
 
@@ -15,7 +17,7 @@ class ErrorHandler(name: String) extends HttpErrorHandler {
         cause : Throwable
     ) : Future[Result] = {
         logger error (s"Server Error, ${request}", cause)
-        Future successful play.api.mvc.Results.InternalServerError.withHeaders("X-Error" -> s"Server Error")
+        Future successful InternalServerError.withHeaders("X-Error" -> s"Server Error")
     }
 
     override def onClientError(
@@ -26,8 +28,12 @@ class ErrorHandler(name: String) extends HttpErrorHandler {
         logger warn s"Client Error, ${request}, Response Status Code: ${statusCode}, Message: ${message} ."
 
         val response =
-            Result.apply(ResponseHeader(statusCode), HttpEntity.NoEntity)
-                .withHeaders("X-Error" -> s"${message}")
+            Result.apply(
+                ResponseHeader(statusCode),
+                HttpEntity.Strict(ByteString("Error"), Some("application/text"))
+            ).withHeaders(
+                "X-Error" -> s"${message}"
+            )
 
         Future successful response
     }

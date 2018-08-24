@@ -20,7 +20,10 @@ case class Context(
                 "-deprecation",
                 "-language:postfixOps"
             ),
-            sbt.Keys.fork := fork
+            sbt.Keys.fork := fork,
+            sbt.Keys.javacOptions ++= Seq(
+                "--illegal-access=warn"
+            )
         )
 
         val step2 = scalaVersions match {

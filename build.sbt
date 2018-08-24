@@ -7,8 +7,11 @@ val context = Context(
     originVersion = "0.1.0-SNAPSHOT",
 )
 
-val webapi = context.newModule("webapi", "play-template-webapi")
+val jsonext =
+    context.newModule("jsonext", "play-template-json-ext")
+
+val webapi =
+    context.newModule("webapi", "play-template-webapi")
+        .dependsOn(jsonext)
 
 val root = context.defRoot(webapi)
-
-

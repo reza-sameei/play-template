@@ -10,11 +10,13 @@ import util.ExtraExecutionContext
 class Info @Inject() (
     extraEC: ExtraExecutionContext,
     components: ControllerComponents,
-    assets: Assets
+    assets: Assets,
+    tm: view.html.Index
 ) extends AbstractController(components) {
 
     def summary = Action { req =>
-        Ok("Kahdoon :)")
+        Ok(tm())
+        // Ok("Kahdoon :)")
     }
 
 }

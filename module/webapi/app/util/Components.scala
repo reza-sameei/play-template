@@ -1,26 +1,29 @@
 package util
 
 import com.typesafe.config.Config
+import controllers.AssetsComponents
 import play.api.ApplicationLoader.Context
+import play.api.inject.ApplicationLifecycle
 import play.api.routing.Router.Routes
-import play.api.routing.SimpleRouter
-import play.api.{BuiltInComponentsFromContext, Logger}
-import play.controllers.AssetsComponents
+import play.api.routing.{Router, SimpleRouter}
+import play.api.{BuiltInComponentsFromContext, Configuration, Logger}
 import play.filters.HttpFiltersComponents
 
 class Components(
     context: Context
 ) extends BuiltInComponentsFromContext(context)
-    with HttpFiltersComponents // https://www.playframework.com/documentation/2.6.x/Migration26#compile-time-default-filters
-    with AssetsComponents // https://www.playframework.com/documentation/2.6.x/Migration26#assets
+  with _root_.controllers.AssetsComponents
+    // https://www.playframework.com/documentation/2.6.x/Migration26#assets
+    // _root_.controllers.AssetsComponents vs _root_.play.controllers.AssetsComponents
+    // https://www.playframework.com/documentation/2.6.x/AssetsOverview
+  with HttpFiltersComponents
+    // https://www.playframework.com/documentation/2.6.x/Migration26#compile-time-default-filters
     // with HttpErrorHandlerComponents
-{
+{ self =>
 
     val logger = Logger("joon-sik.component-loader")
 
     logger debug "Trying"
-
-    override def config() : Config = context.initialConfiguration.underlying
 
     lazy override val httpErrorHandler =
         new ErrorHandler("application.error-hanler")
@@ -28,18 +31,24 @@ class Components(
     lazy val extraEC =
         new ExtraExecutionContextImplV1(actorSystem)
 
+    object viewInstance {
+        lazy val main = new view.html.Template(assetsFinder)
+        lazy val index = new view.html.Index(main)
+    }
+
     object controllerInstance {
-        lazy val info = new controller.Info(extraEC, controllerComponents, assets())
+        lazy val info = new controller.Info(extraEC, controllerComponents, assets, viewInstance.index)
     }
 
-
-
-    lazy override val router = new SimpleRouter {
-        override def routes : Routes =
-            route.Service.withIn("/service/api/v1", controllerInstance.info).orElse {
-                route.PublicStaticAssets.withIn("public", assets)
-            }
+    object routeInstance {
+        val assets = new route.PublicStaticAssets(self.assets).withPrefix("/public")
+        val service = new route.Service(controllerInstance.info).withPrefix("/service/api/v1")
     }
+
+    lazy override val router =
+        Router.from(routeInstance.service.routes.orElse {
+            routeInstance.assets.routes
+        })
 
     logger debug "Done!"
 }

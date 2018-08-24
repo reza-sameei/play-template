@@ -1,0 +1,40 @@
+@*
+https://www.playframework.com/documentation/2.6.x/ScalaTemplatesDependencyInjection
+https://www.playframework.com/documentation/2.6.x/ScalaTemplates
+*@
+
+@this(assets: controllers.AssetsFinder)
+@*
+ * This template is called from the `index` template. This template
+ * handles the rendering of the page header and body tags. It takes
+ * two arguments, a `String` for the title of the page and an `Html`
+ * object to insert into the body of the page.
+ *@
+@(title: String)(content: Html)
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        @* Here's where we render the page title `String`. *@
+
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+
+        <title>@title</title>
+        <link rel="stylesheet" media="screen" href="@assets.path("stylesheets/main.css")"/>
+        <link rel="shortcut icon" type="image/png" href="@assets.path("images/favicon.png")"/>
+        <link rel="stylesheet" media="screen" href="@assets.path("stylesheets/bootstrap/bootstrap.min.css")"/>
+    </head>
+    <body>
+        @* And here's where we render the `Html` object containing
+         * the page content. *@
+        @content
+
+      <script src="@assets.path("javascripts/main.js")" type="text/javascript"></script>
+      <script src="@assets.path("javascripts/jquery-3.3.1.min.js")" type="text/javascript"></script>
+      <script src="@assets.path("javascripts/popper.min.js")" type="text/javascript"></script>
+      <script src="@assets.path("javascripts/bootstrap/bootstrap.min.js")" type="text/javascript"></script>
+    </body>
+</html>
