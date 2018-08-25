@@ -49,6 +49,64 @@ class InfoSuite extends testkit.Underlay {
         body.head.internal mustBe model.hard.PersonID(1)
     }
 
+    it must "Try to add, but get Error(400): Duplicated PersonID " in tryBy {
+        import format.PlayJSON._
+        import model.hard._
+        val person = Person(PersonID(1), NickName("RezaT"), Email("reza.samee@gmail.com"))
+
+        FakeRequest(POST, "/service/api/v1/person/").withHeaders(
+            "Content-Type" -> "text/json"
+        ).withBody(Json.toJson(person))
+    } { res =>
+        val body = bodyAsString(res)
+        info(s"Response: ${res}, ${body}")
+        info(s"Error: ${res.header.headers("X-ERR")}")
+        res.header.status mustBe 400
+    }
+
+    it must "Try to add, but get Error(400): Duplicated Email " in tryBy {
+        import format.PlayJSON._
+        import model.hard._
+        val person = Person(PersonID(3), NickName("RezaT"), Email("reza.samee@gmail.com"))
+
+        FakeRequest(POST, "/service/api/v1/person/").withHeaders(
+            "Content-Type" -> "text/json"
+        ).withBody(Json.toJson(person))
+    } { res =>
+        val body = bodyAsString(res)
+        info(s"Response: ${res}, ${body}")
+        info(s"Error: ${res.header.headers("X-ERR")}")
+        res.header.status mustBe 400
+    }
+
+    it must "Try to add and do it!" in tryBy {
+        import format.PlayJSON._
+        import model.hard._
+        val person = Person(PersonID(3), NickName("RezaT"), Email("reza.t@gmail.com"))
+
+        FakeRequest(POST, "/service/api/v1/person/").withHeaders(
+            "Content-Type" -> "text/json"
+        ).withBody(Json.toJson(person))
+    } { res =>
+        val body = bodyAsString(res)
+        info(s"Response: ${res}, ${body}")
+        res.header.status mustBe 201
+    }
+
+    it must "Try to get new list with 3 items" in tryBy {
+        FakeRequest(GET, "/service/api/v1/person/")
+    } { res =>
+        import format.PlayJSON._
+        val body = bodyAsJSON[Seq[model.hard.Person]](res)
+        info(s"Response: \n\t\t${res}, \n\t\tBody: ${body}")
+        res.header.status mustEqual 200
+
+        body.size mustBe 3
+        body.head.internal mustBe model.hard.PersonID(1)
+    }
+
+
+
     /*it must "return 404" in {
         tryBy { FakeRequest(GET,"/joon-sik/OPS") } { i =>
             i.header.status mustEqual 404

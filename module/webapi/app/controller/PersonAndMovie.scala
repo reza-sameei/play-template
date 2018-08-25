@@ -5,8 +5,10 @@ import play.api.mvc._
 import model.hard._
 import format.PlayJSON._
 import play.api.libs.json._
+import _root_.util.UnifiedResultGenerator
 
 class PersonAndMovie @Inject()(
+    resultGen: UnifiedResultGenerator,
     cc: ControllerComponents
 ) extends AbstractController(cc){
 
@@ -23,17 +25,19 @@ class PersonAndMovie @Inject()(
         Ok(Json.toJson(persons))
     }
 
+    def badReq(string: String) = Results.BadRequest(string).withHeaders("X-Error" -> string)
+
     def add() = Action(parse.json[Person]) { req =>
 
         val person = req.body
 
-        if (personsByID.contains(person.internal.value)) Results.BadRequest("Duplicated PersonID")
-        else if (personsByEmail.contains(person.email.value)) Results.BadRequest("Duplicated Email")
+        if (personsByID.contains(person.internal.value)) resultGen.badReq("Duplicated PersonID")
+        else if (personsByEmail.contains(person.email.value)) resultGen.badReq("Duplicated Email")
         else {
             persons.append(person)
             personsByID = persons.map { i => i.internal.value -> i }.toMap
             personsByEmail = persons.map { i => i.email.value -> i }.toMap
-            Results.Created.as("application/json")
+            resultGen.created("Created!")
         }
 
     }

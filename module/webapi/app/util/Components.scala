@@ -31,6 +31,11 @@ class Components(
     lazy val extraEC =
         new ExtraExecutionContextImplV1(actorSystem)
 
+    lazy val unifiedResultGenerator = new UnifiedResultGenerator(
+        headerKeyForErrors = "X-ERR",
+        genericCntentType = "text/json"
+    )
+
     object viewInstance {
         lazy val main = new view.html.Template(assetsFinder)
         lazy val index = new view.html.Index(main)
@@ -38,7 +43,7 @@ class Components(
 
     object controllerInstance {
         lazy val info = new controller.Info(extraEC, controllerComponents, assets, viewInstance.index)
-        lazy val personAndMovie = new controller.PersonAndMovie(controllerComponents)
+        lazy val personAndMovie = new controller.PersonAndMovie(unifiedResultGenerator, controllerComponents)
     }
 
     object routeInstance {
