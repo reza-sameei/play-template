@@ -42,4 +42,20 @@ class PersonAndMovie @Inject()(
 
     }
 
+    /*
+        https://www.playframework.com/documentation/2.6.x/ScalaJsonHttp
+        def savePlace = Action(parse.json) { request =>
+            val placeResult = request.body.validate[Place]
+            placeResult.fold(
+                errors => {
+                    BadRequest(Json.obj("status" ->"KO", "message" -> JsError.toJson(errors)))
+                },
+                place => {
+                    Place.save(place)
+                    Ok(Json.obj("status" ->"OK", "message" -> ("Place '"+place.name+"' saved.") ))
+                }
+            )
+        }
+    */
+
 }
