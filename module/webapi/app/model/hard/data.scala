@@ -1,8 +1,14 @@
 package model.hard
 
-case class PersonID(value: Long) extends AnyVal
-case class NickName(value: String) extends AnyVal
-case class Email(value: String) extends AnyVal
+case class PersonID(value: PersonID.UnderlayType) extends AnyVal
+object PersonID { type UnderlayType = Long }
+
+case class NickName(value: NickName.UnderlayType) extends AnyVal
+object NickName { type UnderlayType = String }
+
+case class Email(value: Email.UnderlayType) extends AnyVal
+object Email { type UnderlayType = String }
+
 case class Person(internal: PersonID, name: NickName, email: Email)
 
 case class MovieID(value: Long) extends AnyVal

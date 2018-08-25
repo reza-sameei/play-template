@@ -10,6 +10,7 @@ import play.api.http.Writeable
 import play.api.mvc.{Request, Result, Results}
 import play.api.test.Helpers._
 
+import play.api.libs.json._
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext, Future}
 
@@ -24,7 +25,7 @@ trait Underlay
     with OneAppPerSuiteWithComponents
 {
 
-    lazy val underlay = new util.Components(context)
+    lazy val underlay = new _root_.util.Components(context)
     override val components: BuiltInComponents = underlay
     implicit val mat = components.materializer
     implicit val ece = ExecutionContext.global
@@ -53,5 +54,19 @@ trait Underlay
 
     def bodyAsString(result: Result, timeout: FiniteDuration = defaultTimeout) =
         await(result.body.consumeData.map{ i => new String(i.toArray)}, timeout)
+
+    def bodyAsJSON[T](
+        result: Result,
+        timeout: FiniteDuration = defaultTimeout
+    )(
+        implicit
+        reads: Reads[T],
+        src: Position
+    ): T = {
+        Json.fromJson[T](Json.parse(bodyAsString(result))) match {
+            case JsError(errors) => fail(s"Error, Can't parse json: ${errors.mkString(",")}")
+            case JsSuccess(value,_) => value
+        }
+    }
 
 }

@@ -8,6 +8,10 @@ import scala.util.control.NonFatal
 
 object PlayJSON {
 
+    import xyz.sigmalab.template.play.json.JsonOfScalaValueClass._
+    implicit val formatOfPerson = Json.format[Person]
+    implicit val formatOfMovie = Json.format[Movie]
+
 
     /*val writerForPersonID = new Writes[model.PersonID] {
         override def writes(obj : model.PersonID) : JsValue = Json.obj("person_id" -> obj.value)
@@ -33,7 +37,7 @@ object PlayJSON {
     )(model.Person.apply _)*/
 
 
-    implicit val formatForPersonID = Json.format[model.hard.PersonID]
+    /*implicit val formatForPersonID = Json.format[model.hard.PersonID]
     implicit val formatForNickName = Json.format[model.hard.NickName]
     implicit val formatForEmail = Json.format[model.hard.Email]
     implicit val formatForPerson = Json.format[model.hard.Person]
@@ -43,7 +47,7 @@ object PlayJSON {
     implicit val formatYearOfPublish = Json.format[model.hard.YearOfPublish]
     implicit val formatForMovie = Json.format[model.hard.Movie]
 
-    implicit val formatForWatch = Json.format[model.hard.Watched]
+    implicit val formatForWatch = Json.format[model.hard.Watched]*/
 
     /*val formatPerson = Format(
         new Reads[model.hard.Person] {

@@ -38,17 +38,25 @@ class Components(
 
     object controllerInstance {
         lazy val info = new controller.Info(extraEC, controllerComponents, assets, viewInstance.index)
+        lazy val personAndMovie = new controller.PersonAndMovie(controllerComponents)
     }
 
     object routeInstance {
-        val assets = new route.PublicStaticAssets(self.assets).withPrefix("/public")
-        val service = new route.Service(controllerInstance.info).withPrefix("/service/api/v1")
+
+        val assets = new route.PublicStaticAssets(self.assets)
+            .withPrefix("/public")
+
+        val service = new route.Service(
+            controllerInstance.info,
+            controllerInstance.personAndMovie
+        ).withPrefix("/service/api/v1")
     }
 
-    lazy override val router =
-        Router.from(routeInstance.service.routes.orElse {
+    lazy override val router = Router.from(
+        routeInstance.service.routes.orElse {
             routeInstance.assets.routes
-        })
+        }
+    )
 
     logger debug "Done!"
 }
